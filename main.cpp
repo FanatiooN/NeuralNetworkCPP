@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
 
 #define LAYERS_COUNT 3
 using namespace std;
@@ -16,7 +17,7 @@ const int epochs = 100, countTraining = 88800, countTest = 14800;
 int image[width][height];
 double *w1[neuron_layer[0]], *delta1[neuron_layer[0]], *n1;
 double *w2[neuron_layer[1]], *delta2[neuron_layer[1]], *n2;
-double exp[neuron_layer[2]], *delta3[neuron_layer[2]], *n3;
+double Exp[neuron_layer[2]], *delta3[neuron_layer[2]], *n3;
 fstream file_report, file_weights, file_labels, file_image;
 
 void init() {
@@ -51,9 +52,45 @@ void init() {
         }
 }
 
-double ReLU(double x){
+double ReLU(double x) {
     if (x < 0) x *= 0.01;
     else if (x > 1) x = 1. + (x - 1)* 0.01;
     return x;
 }
+
+void perceptron() {
+    for (int i = 0; i < neuron_layer[1]; i++)
+    {
+        n2[i] = 0.;
+        for (int j = 0; j < neuron_layer[0]; j++)
+        {
+            n2[i] += w1[j][i] * n1[j];
+        }
+        n2[i] = ReLU(n2[i]);
+    }
+
+    for (int i = 0; i < neuron_layer[2]; i++)
+    {
+        n3[i] = 0.;
+        for (int j = 0; j < neuron_layer[1]; j++)
+        {
+            n3[i] += w2[j][i] * n2[j];
+        }
+        n3[i] = ReLU(n3[i]);
+    }
+}
+
+double square_error(){
+    int sum = 0.;
+    for (int i = 0; i < neuron_layer[2]; i++)
+        sum += pow((n3[i] - Exp[i]), 2);
+    return sum;
+
+}
+
+void back_prop() {
+    
+}
+
+double
 
